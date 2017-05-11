@@ -49,6 +49,8 @@ var flatten;
 	var drumTrackFinished;
 	var drumDefinition = {};
 
+	var writeChords = true;
+
 	var normalBreakBetweenNotes = 1.0/128;	// a 128th note of silence between notes for articulation.
 
 	flatten = function(voices, options) {
@@ -78,6 +80,10 @@ var flatten;
 		drumTrack = [];
 		drumTrackFinished = false;
 		drumDefinition = {};
+
+		if (options.writeChords === false){
+			writeChords = false;
+		}
 
 		for (var i = 0; i < voices.length; i++) {
 			transpose = 0;
@@ -237,7 +243,11 @@ var flatten;
 		//
 
 		var velocity = voiceOff ? 0 : 64;
-		var chord = findChord(elem);
+		var chord;
+		if (writeChords)
+			chord = findChord(elem);
+		else
+			chord = null;
 		if (chord) {
 			var c = interpretChord(chord);
 			// If this isn't a recognized chord, just completely ignore it.
@@ -249,11 +259,11 @@ var flatten;
 					// need to figure out how far in time the chord started: if there are pickup notes before the chords start, we need pauses.
 					var distance = timeFromStart();
 					if (distance > 0)
-						chordTrack.push({cmd: 'move', duration: distance*tempoChangeFactor });
+						chordTrack.push({elem: elem, cmd: 'move', duration: distance*tempoChangeFactor });
 				}
 
 				lastChord = c;
-				currentChords.push({chord: lastChord, beat: barBeat});
+				currentChords.push({elem: elem, chord: lastChord, beat: barBeat});
 			}
 		}
 
@@ -297,23 +307,23 @@ var flatten;
 
 				// TODO-PER: should the volume vary depending on whether it is on a beat or measure start?
 				if (!pitchesTied[''+actualPitch])	// If this is the second note of a tie, we don't start it again.
-					currentTrack.push({ cmd: 'start', pitch: actualPitch, volume: velocity });
+					currentTrack.push({elem: elem, cmd: 'start', pitch: actualPitch, volume: velocity });
 
 				if (note.startTie)
 					pitchesTied[''+actualPitch] = true;
 				else if (note.endTie)
 					pitchesTied[''+actualPitch] = false;
 			}
-			currentTrack.push({ cmd: 'move', duration: (duration-normalBreakBetweenNotes)*tempoChangeFactor });
+			currentTrack.push({elem: elem, cmd: 'move', duration: (duration-normalBreakBetweenNotes)*tempoChangeFactor });
 			lastNoteDurationPosition = currentTrack.length-1;
 
 			for (var ii = 0; ii < pitches.length; ii++) {
 				if (!pitchesTied[''+pitches[ii].pitch])
-					currentTrack.push({ cmd: 'stop', pitch: pitches[ii].pitch });
+					currentTrack.push({elem: elem, cmd: 'stop', pitch: pitches[ii].pitch });
 			}
-			currentTrack.push({ cmd: 'move', duration: normalBreakBetweenNotes*tempoChangeFactor });
+			currentTrack.push({elem: elem, cmd: 'move', duration: normalBreakBetweenNotes*tempoChangeFactor });
 		} else if (elem.rest) {
-			currentTrack.push({ cmd: 'move', duration: duration*tempoChangeFactor });
+			currentTrack.push({elem: elem, cmd: 'move', duration: duration*tempoChangeFactor });
 		}
 
 		if (elem.endTriplet) {
