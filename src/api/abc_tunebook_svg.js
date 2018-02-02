@@ -1,4 +1,4 @@
-var Raphael = require('raphael');
+var Raphael = require('./raphael.min');
 
 var tunebook = require('./abc_tunebook');
 

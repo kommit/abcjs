@@ -159,6 +159,8 @@ var sequence;
 						for (var v = 0; v < voice.length; v++) {
 							// For each element in a voice
 							var elem = voice[v];
+              elem.line = line;
+              elem.staff = staff;
 							switch (elem.el_type) {
 								case "note":
 									// regular items are just pushed.

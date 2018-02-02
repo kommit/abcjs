@@ -20,7 +20,7 @@
 var spacing = require('./abc_spacing');
 var AbstractEngraver = require('./abc_abstract_engraver');
 var Renderer = require('./abc_renderer');
-var Raphael = require('raphael');
+var Raphael = require('../api/raphael.min');
 
 /**
  * @class

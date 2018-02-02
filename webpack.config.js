@@ -28,12 +28,12 @@ module.exports = (env) => {
 			]
 		},
 		plugins: [
-			new UglifyJsWebpackPlugin({
-				extractComments: {
-					condition: /\!$/,
-					banner: banner
-				}
-			})
+			// new UglifyJsWebpackPlugin({
+			// 	extractComments: {
+			// 		condition: /\!$/,
+			// 		banner: banner
+			// 	}
+			// })
 		]
 	};
 };
